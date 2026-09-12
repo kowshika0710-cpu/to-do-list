@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="DailyTask – Smart To-Do & Productivity Tracker. Organize daily tasks, monitor deadlines, and stay motivated with intelligent productivity tracking.">
+  <meta name="theme-color" content="#10b981">
+  <title>DailyTask – Smart To-Do & Productivity Tracker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Celebratory canvas for milestone achievements -->
+  <canvas id="confettiCanvas" aria-hidden="true"></canvas>
+
+  <div class="app-wrapper">
+    <!-- 1. HEADER & MOTIVATIONAL QUOTE SECTION -->
+    <header class="app-header">
+      <div class="brand-bar">
+        <div class="brand-title-group">
+          <div class="brand-icon" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 11l3 3L22 4"></path>
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+            </svg>
+          </div>
+          <div>
+            <h1 class="brand-title">DailyTask</h1>
+            <p class="brand-subtitle">Smart To-Do &amp; Productivity Tracker</p>
+          </div>
+        </div>
+
+        <!-- Current Date and Day display -->
+        <div class="date-badge" id="currentDateBadge" aria-label="Current date and day">
+          <span class="day-text" id="headerDay">Loading Day...</span>
+          <span class="date-text" id="headerDate">Loading Date...</span>
+        </div>
+      </div>
+
+      <!-- DAILY MOTIVATIONAL QUOTE (AT THE VERY TOP) -->
+      <section class="quote-card" aria-label="Daily Motivational Quote">
+        <div class="quote-icon" aria-hidden="true">“</div>
+        <div class="quote-content">
+          <blockquote id="dailyQuoteText" class="quote-text">Loading today's motivational quote...</blockquote>
+          <cite id="dailyQuoteAuthor" class="quote-author">– Daily Inspiration</cite>
+        </div>
+        <div class="quote-tag">Daily Motivation</div>
+      </section>
+    </header>
+
+    <!-- 2. USER PROFILE & TODAY'S GOAL SECTION -->
+    <section class="profile-card" aria-label="User Profile and Goals">
+      <div class="profile-avatar" aria-hidden="true" id="profileAvatar">👤</div>
+      <div class="profile-details">
+        <div class="profile-name-row">
+          <span class="profile-label">Name:</span>
+          <span class="profile-value" id="profileNameDisplay">Guest Planner</span>
+        </div>
+        <div class="profile-goal-row">
+          <span class="profile-label">Today's Goal:</span>
+          <span class="profile-goal-value" id="profileGoalDisplay">Make meaningful progress today!</span>
+        </div>
+      </div>
+      <button type="button" class="btn btn-secondary btn-edit-profile" id="openProfileModalBtn" aria-label="Edit Profile">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+        </svg>
+        <span>Edit Profile</span>
+      </button>
+    </section>
+
+    <!-- 3. PRODUCTIVITY DASHBOARD (TASK COUNT CARDS) -->
+    <section class="dashboard-section" aria-label="Productivity Statistics Dashboard">
+      <h2 class="section-heading">Productivity Dashboard</h2>
+      <div class="stats-grid">
+        <div class="stat-card" id="statTotalCard">
+          <div class="stat-icon total-icon" aria-hidden="true">📋</div>
+          <div class="stat-info">
+            <span class="stat-label">Total Tasks</span>
+            <span class="stat-number" id="statTotal">0</span>
+          </div>
+        </div>
+
+        <div class="stat-card" id="statCompletedCard">
+          <div class="stat-icon completed-icon" aria-hidden="true">✅</div>
+          <div class="stat-info">
+            <span class="stat-label">Completed</span>
+            <span class="stat-number" id="statCompleted">0</span>
+          </div>
+        </div>
+
+        <div class="stat-card" id="statPendingCard">
+          <div class="stat-icon pending-icon" aria-hidden="true">⏳</div>
+          <div class="stat-info">
+            <span class="stat-label">Pending</span>
+            <span class="stat-number" id="statPending">0</span>
+          </div>
+        </div>
+
+        <div class="stat-card" id="statRateCard">
+          <div class="stat-icon rate-icon" aria-hidden="true">📈</div>
+          <div class="stat-info">
+            <span class="stat-label">Completion Rate</span>
+            <span class="stat-number" id="statRate">0%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROGRESS BAR & PERFORMANCE COMPARISON -->
+      <div class="progress-container-card">
+        <div class="progress-header">
+          <div class="progress-title-wrap">
+            <span class="progress-title">Today's Progress</span>
+            <span class="progress-percentage-badge" id="progressPercentageBadge">0%</span>
+          </div>
+          <div class="comparison-status-pill" id="comparisonStatusPill" aria-live="polite">
+            <span class="status-dot" id="statusDot">🟢</span>
+            <span class="status-text" id="statusText">GOOD</span>
+          </div>
+        </div>
+
+        <!-- Visual progress bar -->
+        <div class="progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="progressTrack">
+          <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+        </div>
+
+        <!-- Daily comparison motivational insight -->
+        <div class="comparison-message-box" id="comparisonMessageBox">
+          <span class="message-icon" aria-hidden="true">💡</span>
+          <span class="message-content" id="comparisonMessageText">Every day is a fresh start. Let's make today count!</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. ADD TASK SECTION -->
+    <section class="add-task-section" aria-label="Add New Task">
+      <div class="card-box add-task-card">
+        <div class="card-header-row">
+          <h2 class="section-heading">Add New Task</h2>
+          <span class="badge-hint">Quick &amp; Simple</span>
+        </div>
+
+        <form id="addTaskForm" novalidate>
+          <div class="form-row">
+            <div class="form-group flex-2">
+              <label for="taskTitleInput">Task Name <span class="required-star">*</span></label>
+              <input 
+                type="text" 
+                id="taskTitleInput" 
+                name="title" 
+                placeholder="e.g. Complete Java Assignment" 
+                required 
+                maxlength="120"
+                autocomplete="off"
+              >
+              <span class="field-error" id="titleError" aria-live="polite"></span>
+            </div>
+
+            <div class="form-group flex-1">
+              <label for="taskPriorityInput">Priority</label>
+              <div class="custom-select-wrap">
+                <select id="taskPriorityInput" name="priority">
+                  <option value="low">Low Priority</option>
+                  <option value="medium" selected>Medium Priority</option>
+                  <option value="high">High Priority</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="taskDateInput">Deadline Date</label>
+              <input type="date" id="taskDateInput" name="dueDate">
+            </div>
+
+            <div class="form-group flex-1">
+              <label for="taskTimeInput">Deadline Time</label>
+              <input type="time" id="taskTimeInput" name="dueTime">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="taskDescInput">Task Description <span class="optional-label">(optional)</span></label>
+            <textarea 
+              id="taskDescInput" 
+              name="description" 
+              rows="2" 
+              placeholder="e.g. Finish inheritance program and test edge cases"
+              maxlength="300"
+            ></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="addTaskSubmitBtn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>+ Add Task</span>
+            </button>
+            <button type="button" class="btn btn-ghost" id="clearFormBtn">Clear Form</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- 5. SEARCH & FILTER SECTION -->
+    <section class="filter-section" aria-label="Search and Filter Tasks">
+      <div class="search-box-wrap">
+        <span class="search-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </span>
+        <input 
+          type="search" 
+          id="taskSearchInput" 
+          placeholder="Search tasks by name or description..." 
+          aria-label="Search tasks"
+        >
+        <button type="button" id="clearSearchBtn" class="clear-search-btn" aria-label="Clear search" style="display: none;">&times;</button>
+      </div>
+
+      <!-- Filter Buttons -->
+      <div class="filters-row" role="group" aria-label="Filter tasks">
+        <button type="button" class="filter-btn active" data-filter="all">All</button>
+        <button type="button" class="filter-btn" data-filter="pending">Pending</button>
+        <button type="button" class="filter-btn" data-filter="completed">Completed</button>
+        <span class="filter-divider" aria-hidden="true">|</span>
+        <button type="button" class="filter-btn filter-priority-high" data-filter="high">High Priority</button>
+        <button type="button" class="filter-btn filter-priority-medium" data-filter="medium">Medium Priority</button>
+        <button type="button" class="filter-btn filter-priority-low" data-filter="low">Low Priority</button>
+      </div>
+    </section>
+
+    <!-- 6. TASK LIST SECTION -->
+    <section class="task-list-section" aria-label="Task List">
+      <div class="task-list-header">
+        <h2 class="section-heading">My Tasks</h2>
+        <span class="tasks-count-badge" id="tasksFoundCount">0 tasks</span>
+      </div>
+
+      <!-- Container for dynamically generated task cards -->
+      <div class="tasks-container" id="tasksContainer" aria-live="polite">
+        <!-- Task cards will be safely injected here via JavaScript -->
+      </div>
+
+      <!-- Empty State View -->
+      <div class="empty-state" id="emptyState" style="display: none;">
+        <div class="empty-icon" aria-hidden="true">🌱</div>
+        <h3 class="empty-title" id="emptyStateTitle">No tasks found</h3>
+        <p class="empty-subtitle" id="emptyStateSubtitle">Add your first task above to start your productive day!</p>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="app-footer">
+      <p>DailyTask &bull; A mindful productivity companion built with pure HTML, CSS &amp; JavaScript.</p>
+      <p class="footer-sub">Data saved locally in your browser. Fully functional offline.</p>
+    </footer>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER (MOTIVATIONAL FEEDBACK) -->
+  <div id="toastContainer" class="toast-container" aria-live="assertive" aria-atomic="true"></div>
+
+  <!-- MODAL: EDIT PROFILE -->
+  <div class="modal-backdrop" id="profileModal" role="dialog" aria-modal="true" aria-labelledby="profileModalTitle" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="profileModalTitle" class="modal-title">Edit Profile</h3>
+        <button type="button" class="modal-close-btn" id="closeProfileModalBtn" aria-label="Close modal">&times;</button>
+      </div>
+      <form id="profileForm">
+        <div class="form-group">
+          <label for="profileNameInput">Your Name</label>
+          <input type="text" id="profileNameInput" placeholder="Enter your name" maxlength="40">
+        </div>
+        <div class="form-group">
+          <label for="profileGoalInput">Today's Goal</label>
+          <input type="text" id="profileGoalInput" placeholder="e.g. Finish assignments & exercise" maxlength="100">
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" id="cancelProfileBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Profile</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: EDIT TASK -->
+  <div class="modal-backdrop" id="editTaskModal" role="dialog" aria-modal="true" aria-labelledby="editTaskModalTitle" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="editTaskModalTitle" class="modal-title">Edit Task</h3>
+        <button type="button" class="modal-close-btn" id="closeEditTaskModalBtn" aria-label="Close modal">&times;</button>
+      </div>
+      <form id="editTaskForm">
+        <input type="hidden" id="editTaskId">
+        <div class="form-group">
+          <label for="editTaskTitleInput">Task Name <span class="required-star">*</span></label>
+          <input type="text" id="editTaskTitleInput" required maxlength="120">
+          <span class="field-error" id="editTitleError" aria-live="polite"></span>
+        </div>
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="editTaskPriorityInput">Priority</label>
+            <select id="editTaskPriorityInput">
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+          <div class="form-group flex-1">
+            <label for="editTaskDateInput">Deadline Date</label>
+            <input type="date" id="editTaskDateInput">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="editTaskTimeInput">Deadline Time</label>
+          <input type="time" id="editTaskTimeInput">
+        </div>
+        <div class="form-group">
+          <label for="editTaskDescInput">Description <span class="optional-label">(optional)</span></label>
+          <textarea id="editTaskDescInput" rows="2" maxlength="300"></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" id="cancelEditTaskBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Update Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: DELETE CONFIRMATION -->
+  <div class="modal-backdrop" id="deleteModal" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle" style="display: none;">
+    <div class="modal-card modal-card-sm">
+      <div class="modal-header">
+        <div class="delete-warning-icon" aria-hidden="true">⚠️</div>
+        <h3 id="deleteModalTitle" class="modal-title">Delete Task?</h3>
+        <button type="button" class="modal-close-btn" id="closeDeleteModalBtn" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete this task?</p>
+        <p class="task-title-preview" id="deleteTaskTitlePreview">"Task Name"</p>
+        <p class="delete-subtext">This action cannot be undone.</p>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="cancelDeleteBtn">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
